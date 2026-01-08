@@ -1,0 +1,18 @@
+graph LR
+  classDef system fill:#E8F1F8,stroke:#4C78A8,stroke-width:2px
+  classDef tool fill:#F9E3D4,stroke:#F58518,stroke-width:1.5px
+  classDef user fill:#FFFFFF,stroke:#4C78A8,stroke-width:2px
+
+  User([Usuario Final<br/>(Navegador Web)]):::user
+  System[(Expense Tracker<br/>Sistema)]:::system
+  Ralph[[Scripts Ralph<br/>(Automatización)]]:::tool
+
+  User -->|Interactúa vía UI web<br/>(crear/listar gastos)| System
+  Ralph -.->|Ejecuta iteraciones<br/>automatiza tareas| System
+
+  note right of System: Demo sin integraciones externas<br/>ni persistencia; estado en memoria.
+
+  subgraph Legend
+    L1([Sistema principal]):::system
+    L2([Herramienta externa]):::tool
+  end

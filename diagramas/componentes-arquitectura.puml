@@ -1,0 +1,44 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam rectangle {
+  BackgroundColor #E8F1F8
+  BorderColor #4C78A8
+  RoundCorner 10
+}
+skinparam component {
+  BackgroundColor #E8F1F8
+  BorderColor #4C78A8
+}
+
+title Componentes - Arquitectura Expense Tracker
+
+package "Frontend (React + Vite)" #F4F8FB {
+  component "App.jsx\n- Formulario\n- Lista + Total\n- Botón Delete (stub)" as App
+  component "Fetch API\n(fetch JSON)" as Fetcher
+  App --> Fetcher : Llama API\n(POST/GET)
+}
+
+package "Backend (FastAPI)" #F4F8FB {
+  component "Rutas\n/expenses\n/expenses/{id}\n..." as Routes
+  component "Modelos Pydantic\nExpenseCreate, ExpenseUpdate, Expense" as Models
+  component "Storage\nLista global expenses" as Store
+  Routes --> Models
+  Routes --> Store
+}
+
+component "Tests Pytest\n(test_main.py)" as Tests #F9E3D4
+
+App --> Routes : HTTP JSON
+Fetcher ..> Routes : Implementa llamadas\ncon fetch/async
+Tests --> Routes : TestClient\n(limpia estado)
+
+note right of Store
+Almacenamiento en memoria,\nreinicio borra los datos.
+end note
+
+legend left
+| Color | Significado |
+|<#E8F1F8> | Componentes del sistema |
+|<#F9E3D4> | Soporte (tests) |
+endlegend
+@enduml

@@ -1,0 +1,36 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam sequence {
+  ArrowColor #4C78A8
+  ActorBorderColor #4C78A8
+  LifeLineBorderColor #4C78A8
+  LifeLineBackgroundColor #E8F1F8
+}
+
+title Secuencia - Flujo principal (crear y listar gasto)
+
+actor Usuario as U
+participant "Frontend React\n(App.jsx)" as FE
+participant "API FastAPI\n(main.py)" as API
+participant "Memoria\n(lista expenses)" as MEM
+
+U -> FE : Ingresa descripción, monto, categoría
+FE -> API : POST /expenses {json}
+API -> MEM : Append gasto a lista
+MEM --> API : Gasto creado
+API --> FE : 201 Created + gasto con id y created_at
+FE -> FE : Limpiar formulario\nRecalcular total
+FE -> API : GET /expenses
+API -> MEM : Leer lista
+MEM --> API : Lista de gastos
+API --> FE : 200 OK + lista
+FE --> U : Renderiza lista y total actualizado
+
+note right of MEM
+Estado efímero en memoria;\nreinicio borra los datos.
+end note
+
+legend left
+Frontend usa fetch con async/await;\nlas demás rutas (update/delete/stats)\naún están pendientes.
+endlegend
+@enduml

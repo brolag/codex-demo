@@ -1,0 +1,47 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam rectangle {
+  BackgroundColor #E8F1F8
+  BorderColor #4C78A8
+  RoundCorner 10
+}
+skinparam database {
+  BackgroundColor #FDF6E3
+  BorderColor #F58518
+}
+skinparam node {
+  BackgroundColor #F4F8FB
+  BorderColor #4C78A8
+}
+
+title C4 Nivel 2 - Contenedores (Expense Tracker)
+
+node "Cliente Web" as Client #F4F8FB {
+  rectangle "Frontend React\n(Vite, hooks)\nPuerto 5173" as FE
+}
+
+node "Backend" as Backend #F4F8FB {
+  rectangle "API FastAPI\n(main.py)\nPuerto 8000" as API
+  database "Almacenamiento\nEn memoria (lista expenses)" as MEM
+}
+
+rectangle "Pytest\n(Suite de pruebas)" as Tests #F9E3D4
+rectangle "Scripts Ralph\n(Loop HITL/AFK)" as Ralph #F9E3D4
+
+Client --> FE : UI en navegador
+FE --> API : HTTP JSON\n(POST/GET /expenses, etc.)
+API --> MEM : Operaciones CRUD\n(en memoria)
+Tests --> API : Llamadas TestClient\n(limpia estado por fixture)
+Ralph ..> API : Orquesta implementaciones\n(según prd.json/progress.txt)
+
+note right of MEM
+Sin BD externa: datos se pierden\nal reiniciar proceso.
+end note
+
+legend left
+| Color | Significado |
+|<#E8F1F8> | Contenedores del sistema |
+|<#F9E3D4> | Soporte/automatización |
+|<#FDF6E3> | Datos en memoria |
+endlegend
+@enduml

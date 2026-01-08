@@ -1,0 +1,21 @@
+sequenceDiagram
+    autonumber
+    actor U as Usuario
+    participant FE as Frontend React<br/>App.jsx
+    participant API as API FastAPI<br/>main.py
+    participant MEM as Memoria<br/>lista expenses
+
+    U->>FE: Ingresa descripción, monto, categoría
+    FE->>API: POST /expenses {json}
+    API->>MEM: Append gasto
+    MEM-->>API: Gasto creado
+    API-->>FE: 201 Created<br/>+ id y created_at
+    FE->>FE: Limpiar formulario<br/>Recalcular total
+    FE->>API: GET /expenses
+    API->>MEM: Leer lista
+    MEM-->>API: Lista de gastos
+    API-->>FE: 200 OK + lista
+    FE-->>U: Renderiza lista y total
+
+    Note over MEM: Estado efímero en memoria;<br/>reinicio borra los datos.
+    Note over FE,API: Rutas update/delete/filter/stats<br/>pendientes de implementación.

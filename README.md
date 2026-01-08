@@ -1,146 +1,130 @@
-# Expense Tracker - Ralph Wiggum Pattern Demo
+# Expense Tracker 🧾
 
-Demo project for teaching the **Ralph Wiggum autonomous coding loop** pattern with **Codex CLI**.
+Demo de un rastreador de gastos con API en FastAPI y frontend en React + Vite, usado para practicar el ciclo autónomo Ralph Wiggum (iteraciones cortas, una feature a la vez).
 
-## What is Ralph Wiggum?
+- [Características](#características-principales)
+- [Tecnologías](#tecnologías-utilizadas)
+- [Arquitectura](#arquitectura)
+- [Prerequisitos](#prerequisitos)
+- [Instalación](#instalación)
+- [Variables de entorno](#variables-de-entorno)
+- [Cómo ejecutar](#cómo-ejecutar)
+- [Estructura del proyecto](#estructura-del-proyecto)
+- [API Endpoints](#api-endpoints)
+- [Scripts disponibles](#scripts-disponibles)
+- [Contribución](#contribución)
+- [Troubleshooting](#troubleshooting)
 
-An autonomous AI coding pattern by Matt Pocock where:
-1. **The agent picks the task** - Not you
-2. **progress.txt is memory** - Persists between iterations
-3. **Promise-based exit** - `<promise>COMPLETE</promise>` signals done
-4. **Small steps** - One feature per iteration
+## Características principales
+- ✅ Crear gasto `POST /expenses` con `description`, `amount`, `category`.
+- ✅ Listar gastos `GET /expenses`.
+- 🔜 Obtener gasto por ID, actualizar, eliminar, filtrar por categoría, estadísticas por categoría (features planeadas en `prd.json`).
+- Frontend React muestra lista, total y formulario de alta; eliminación aún pendiente en UI.
 
-## Project Structure
+## Tecnologías utilizadas
+- Backend: FastAPI 0.109, Pydantic 2.5, Uvicorn 0.27, Python 3.10+.
+- Testing backend: Pytest 7.4.
+- Frontend: React 18, Vite 5.
+- Tooling: Scripts del bucle Ralph (`ralph.sh`, `scripts/*.sh`).
+
+## Arquitectura
+Servicio REST minimalista sin capas adicionales:
+- API en un solo módulo (`backend/main.py`) con almacenamiento en memoria (lista global `expenses`).
+- Frontend monocasco en React que consume la API vía `fetch` y maneja estado con hooks.
+- Sin base de datos ni servicios externos; pensado para iterar rápido en demos y pruebas.
+
+## Prerequisitos
+- Python 3.10+ y `pip`.
+- Node.js 18+ y `npm`.
+- Bash/zsh para los scripts de automatización (opcional).
+
+## Instalación
+1. Clona el repositorio y entra al directorio.
+2. **Backend**
+   ```bash
+   cd backend
+   python3 -m venv venv
+   source venv/bin/activate   # Windows: venv\Scripts\activate
+   pip install -r requirements.txt
+   ```
+3. **Frontend**
+   ```bash
+   cd frontend
+   npm install
+   ```
+
+## Variables de entorno
+No se requieren por defecto; valores están hardcodeados para el demo. Si necesitas configurarlas, usa esta plantilla:
+
+```bash
+# backend/.env (opcional)
+BACKEND_PORT=8000
+BACKEND_HOST=0.0.0.0
+ALLOW_ORIGINS=http://localhost:5173
+
+# frontend/.env (opcional)
+VITE_API_URL=http://localhost:8000
+```
+
+## Cómo ejecutar
+**Desarrollo**
+- Backend: `cd backend && uvicorn main:app --reload --port 8000`
+- Frontend: `cd frontend && npm run dev` (abre `http://localhost:5173`)
+
+**Producción (básico)**
+- Backend: `cd backend && uvicorn main:app --host 0.0.0.0 --port 8000`
+- Frontend: `cd frontend && npm run build && npm run preview` (o sirve `dist/` con tu servidor preferido)
+
+**Testing**
+- Backend: `cd backend && pytest -v`
+
+## Estructura del proyecto
+<details>
+<summary>Ver árbol</summary>
 
 ```
-codex-loop-demo/
-├── backend/              # Python FastAPI API
-│   ├── main.py          # API endpoints (some TODO)
-│   ├── test_main.py     # Pytest tests
+.
+├── backend/               # API FastAPI (main.py, tests, deps)
+│   ├── main.py            # Endpoints y almacenamiento en memoria
+│   ├── test_main.py       # Pruebas Pytest (algunas skip en TODO)
 │   └── requirements.txt
-├── frontend/            # React + Vite
-│   ├── src/
-│   │   ├── App.jsx     # Main component
-│   │   └── ...
-│   └── package.json
-├── prd.json             # Features tracking (passes: true/false)
-├── progress.txt         # Inter-iteration memory
-├── AGENTS.md            # Quality instructions for Codex
-└── ralph.sh             # The loop script
+├── frontend/              # React + Vite
+│   ├── src/App.jsx        # UI principal (listar/crear gastos)
+│   ├── src/main.jsx       # Entrypoint Vite
+│   └── src/index.css      # Estilos básicos
+├── prd.json               # Lista de features con estado (passes true/false)
+├── progress.txt           # Log de iteraciones del ciclo Ralph
+├── AGENTS.md              # Instrucciones de calidad para agentes
+├── ralph.sh               # Script del loop autónomo
+└── scripts/               # Variantes HITL/AFK del loop
 ```
+</details>
 
-## Features
+## API Endpoints
+- `GET /health` → `{"status": "ok"}`
+- `POST /expenses` → Crea gasto. Body: `{description, amount, category}`. Responde `201` con gasto + `id` y `created_at`.
+- `GET /expenses` → Lista de gastos.
+- `GET /expenses/{expense_id}` → 🔜 Obtener por ID (pendiente).
+- `PUT /expenses/{expense_id}` → 🔜 Actualizar gasto (pendiente).
+- `DELETE /expenses/{expense_id}` → 🔜 Eliminar gasto (pendiente).
+- `GET /expenses/category/{category}` → 🔜 Filtrar por categoría (pendiente).
+- `GET /stats/by-category` → 🔜 Totales por categoría (pendiente).
 
-| ID | Feature | Status |
-|----|---------|--------|
-| feat-001 | Create expense | Done |
-| feat-002 | List expenses | Done |
-| feat-003 | Get by ID | TODO |
-| feat-004 | Update expense | TODO |
-| feat-005 | Delete expense | TODO |
-| feat-006 | Filter by category | TODO |
-| feat-007 | Stats by category | TODO |
+## Scripts disponibles
+- `npm run dev` (frontend) → Servidor Vite.
+- `npm run build` (frontend) → Build de producción.
+- `npm run preview` (frontend) → Previsualizar build.
+- `ralph.sh` y `scripts/*.sh` → Ejecutan el loop Ralph Wiggum en modos HITL/AFK (lee `prd.json` y `progress.txt`).
 
-## Quick Start
+## Contribución
+1. Crea una rama a partir de `main`.
+2. Implementa **una sola feature** a la vez (ver `prd.json`), empezando por backend y luego frontend.
+3. Quita `@pytest.mark.skip` de la prueba asociada cuando implementes la feature.
+4. Ejecuta `cd backend && pytest -v` antes de abrir PR.
+5. Actualiza `progress.txt` con lo realizado.
 
-### 1. Setup Backend
-```bash
-cd backend
-python3 -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-### 2. Setup Frontend
-```bash
-cd frontend
-npm install
-```
-
-### 3. Run Manually (to test)
-```bash
-# Terminal 1 - Backend
-cd backend && uvicorn main:app --reload
-
-# Terminal 2 - Frontend
-cd frontend && npm run dev
-```
-
-### 4. Run the Loop
-```bash
-# Make executable
-chmod +x ralph.sh
-
-# Run with max 10 iterations
-./ralph.sh 10
-```
-
-## How the Loop Works
-
-```
-+---------------------------------------------+
-|  ralph.sh starts iteration                  |
-+----------------------+----------------------+
-                       |
-                       v
-+---------------------------------------------+
-|  Codex reads: prd.json, progress.txt        |
-|  Picks ONE feature to implement             |
-+----------------------+----------------------+
-                       |
-                       v
-+---------------------------------------------+
-|  Implements feature + removes test skip     |
-|  Runs pytest                                |
-+----------------------+----------------------+
-                       |
-                       v
-+---------------------------------------------+
-|  Updates progress.txt                       |
-|  If all done: <promise>COMPLETE</promise>   |
-+----------------------+----------------------+
-                       |
-          +------------+------------+
-          |                         |
-          v                         v
-     [COMPLETE]              [Next iteration]
-```
-
-## Key Files
-
-### prd.json
-```json
-{
-  "features": [
-    { "id": "feat-001", "title": "Create expense", "passes": true },
-    { "id": "feat-003", "title": "Get by ID", "passes": false }
-  ]
-}
-```
-- `passes: true` = implemented and tests pass
-- `passes: false` = needs implementation
-
-### progress.txt
-```
-## Iteration 3
-- Implemented feat-003 (get by ID)
-- Removed @pytest.mark.skip from TestGetExpense
-- All tests passing
-```
-
-### AGENTS.md
-Quality instructions that Codex follows (one feature at a time, run tests, etc.)
-
-## Teaching Points
-
-1. **Agent autonomy** - Codex decides what to work on
-2. **State persistence** - progress.txt survives between iterations
-3. **Structured exit** - Promise pattern for completion
-4. **Test-driven** - Tests define "done"
-5. **Small batches** - One feature per loop reduces errors
-
-## Requirements
-
-- Python 3.10+
-- Node.js 18+
-- Codex CLI (`npm install -g @openai/codex`)
+## Troubleshooting
+- ⚠️ **Dependencias faltantes**: verifica que el virtualenv esté activado y corre `pip install -r requirements.txt`.
+- ⚠️ **CORS**: si cambias el puerto del frontend, ajusta `allow_origins` en `backend/main.py` (o `ALLOW_ORIGINS` si usas .env).
+- ⚠️ **Puertos ocupados**: modifica `BACKEND_PORT`/`VITE_API_URL` según disponibilidad.
+- ℹ️ **Estado perdido**: los datos viven en memoria; reiniciar el backend borra los gastos (comportamiento esperado en el demo).

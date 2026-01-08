@@ -1,0 +1,26 @@
+graph LR
+  classDef comp fill:#E8F1F8,stroke:#4C78A8,stroke-width:2px
+  classDef support fill:#F9E3D4,stroke:#F58518,stroke-width:1.5px
+  classDef store fill:#FDF6E3,stroke:#F58518,stroke-width:1.5px
+
+  subgraph Frontend (React + Vite)
+    App[App.jsx<br/>Formulario, Lista, Total<br/>Botón Delete (stub)]:::comp
+    Fetcher[Fetch API<br/>fetch/async]:::comp
+    App --> Fetcher : Invoca HTTP
+  end
+
+  subgraph Backend (FastAPI)
+    Routes[Routes<br/>/expenses, /health, etc.]:::comp
+    Models[Modelos Pydantic<br/>ExpenseCreate/Update/Expense]:::comp
+    Store[(Lista global expenses)]:::store
+    Routes --> Models
+    Routes --> Store
+  end
+
+  Tests[[Tests Pytest<br/>test_main.py]]:::support
+
+  App --> Routes : HTTP JSON
+  Fetcher ..> Routes : Llamadas fetch
+  Tests --> Routes : TestClient<br/>limpia estado
+
+  note right of Store: Almacenamiento en memoria;\nreinicio borra los datos.
