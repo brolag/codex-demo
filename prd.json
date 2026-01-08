@@ -1,0 +1,63 @@
+{
+  "version": "2.0",
+  "project": "expense-tracker",
+  "description": "Simple expense tracker with Python FastAPI backend and React frontend",
+  "features": [
+    {
+      "id": "feat-001",
+      "title": "Create expense",
+      "description": "POST /expenses - Add a new expense with description, amount, and category",
+      "files": ["backend/main.py", "frontend/src/App.jsx"],
+      "tests": ["backend/test_main.py::TestCreateExpense"],
+      "passes": true
+    },
+    {
+      "id": "feat-002",
+      "title": "List expenses",
+      "description": "GET /expenses - Return all expenses",
+      "files": ["backend/main.py", "frontend/src/App.jsx"],
+      "tests": ["backend/test_main.py::TestListExpenses"],
+      "passes": true
+    },
+    {
+      "id": "feat-003",
+      "title": "Get expense by ID",
+      "description": "GET /expenses/:id - Return a specific expense by its ID",
+      "files": ["backend/main.py"],
+      "tests": ["backend/test_main.py::TestGetExpense"],
+      "passes": false
+    },
+    {
+      "id": "feat-004",
+      "title": "Update expense",
+      "description": "PUT /expenses/:id - Update an existing expense",
+      "files": ["backend/main.py"],
+      "tests": ["backend/test_main.py::TestUpdateExpense"],
+      "passes": false
+    },
+    {
+      "id": "feat-005",
+      "title": "Delete expense",
+      "description": "DELETE /expenses/:id - Remove an expense. Also implement in frontend.",
+      "files": ["backend/main.py", "frontend/src/App.jsx"],
+      "tests": ["backend/test_main.py::TestDeleteExpense"],
+      "passes": false
+    },
+    {
+      "id": "feat-006",
+      "title": "Filter by category",
+      "description": "GET /expenses/category/:category - Filter expenses by category",
+      "files": ["backend/main.py"],
+      "tests": ["backend/test_main.py::TestFilterByCategory"],
+      "passes": false
+    },
+    {
+      "id": "feat-007",
+      "title": "Stats by category",
+      "description": "GET /stats/by-category - Return total amounts grouped by category",
+      "files": ["backend/main.py"],
+      "tests": ["backend/test_main.py::TestStatsByCategory"],
+      "passes": false
+    }
+  ]
+}

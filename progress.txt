@@ -1,0 +1,51 @@
+# Expense Tracker - Progress Log
+
+## Session: Initial Setup
+- Created project structure with backend/ and frontend/
+- Backend: FastAPI with in-memory storage
+- Frontend: React + Vite
+- Implemented feat-001 (create expense) and feat-002 (list expenses)
+- Tests passing for implemented features
+
+## Pending Features
+- feat-003: Get expense by ID
+- feat-004: Update expense
+- feat-005: Delete expense (backend + frontend)
+- feat-006: Filter by category
+- feat-007: Stats by category
+
+## Notes
+- Tests use @pytest.mark.skip for unimplemented features
+- Remove skip decorators as you implement each feature
+- Run tests with: cd backend && pytest -v
+
+---
+
+## Ralph Scripts Added
+
+Created comprehensive Ralph loop scripts:
+
+### Claude Code Scripts
+- `scripts/ralph-once.sh` - HITL single iteration
+- `scripts/afk-ralph.sh` - AFK autonomous loop
+
+### Codex CLI Scripts
+- `scripts/codex-ralph-once.sh` - HITL single iteration
+- `scripts/codex-afk-ralph.sh` - AFK autonomous loop
+
+### Global Skill
+- `~/.claude/skills/ralph/SKILL.md` - Neural Claude Code `/ralph` command
+
+### Usage
+```bash
+# Single iteration (watch and learn)
+./scripts/ralph-once.sh        # Claude
+./scripts/codex-ralph-once.sh  # Codex
+
+# AFK loop (autonomous)
+./scripts/afk-ralph.sh 10        # Claude, 10 iterations
+./scripts/codex-afk-ralph.sh 10  # Codex, 10 iterations
+```
+
+---
+## Iteration Log (Codex will append here)
