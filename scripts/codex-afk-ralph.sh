@@ -3,7 +3,7 @@
 # Usage: ./scripts/codex-afk-ralph.sh <iterations>
 # Example: ./scripts/codex-afk-ralph.sh 10
 
-set -e
+set -euo pipefail
 
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -12,7 +12,12 @@ BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 NC='\033[0m'
 
-MAX_ITERATIONS=${1:-10}
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT_DIR"
+
+PROMPT_PATH="${PROMPT_PATH:-.codex/prompts/ralph-expense.md}"
+TEST_CMD="${TEST_CMD:-cd backend && pytest -v}"
+MAX_ITERATIONS="${MAX:-${1:-10}}"
 PROMISE_TEXT="COMPLETE"
 LOG_FILE="codex-ralph-session-$(date +%Y%m%d-%H%M%S).log"
 
@@ -20,7 +25,9 @@ echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}      AFK Ralph Loop (Codex CLI)       ${NC}"
 echo -e "${BLUE}========================================${NC}"
 echo ""
+echo -e "Prompt: ${YELLOW}${PROMPT_PATH}${NC}"
 echo -e "Max iterations: ${YELLOW}$MAX_ITERATIONS${NC}"
+echo -e "Test command: ${YELLOW}${TEST_CMD}${NC}"
 echo -e "Exit promise: ${GREEN}<promise>$PROMISE_TEXT</promise>${NC}"
 echo -e "Log file: ${CYAN}$LOG_FILE${NC}"
 echo ""
@@ -32,9 +39,16 @@ if ! command -v codex &> /dev/null; then
     exit 1
 fi
 
+if [[ ! -f "$PROMPT_PATH" ]]; then
+    echo -e "${RED}Prompt file not found:${NC} $PROMPT_PATH"
+    exit 1
+fi
+
 # Log start
 echo "Codex Ralph AFK Session Started: $(date)" | tee "$LOG_FILE"
 echo "Max Iterations: $MAX_ITERATIONS" | tee -a "$LOG_FILE"
+echo "Prompt: $PROMPT_PATH" | tee -a "$LOG_FILE"
+echo "Test command: $TEST_CMD" | tee -a "$LOG_FILE"
 echo "---" | tee -a "$LOG_FILE"
 
 # Main loop
@@ -48,27 +62,14 @@ for ((i=1; i<=$MAX_ITERATIONS; i++)); do
 
     # Run Codex with full-auto mode
     result=$(codex exec "
-You are working on an Expense Tracker project.
+@prd.json @progress.txt @AGENTS.md @$PROMPT_PATH
 
-@prd.json @progress.txt @AGENTS.md
+MODE=afk
+ITERATION=$i
+MAX=$MAX_ITERATIONS
+TEST_CMD=\"$TEST_CMD\"
 
-YOUR TASK:
-1. Read prd.json to see which features need implementation (passes: false)
-2. Read progress.txt to see what was done before
-3. Pick ONE feature to implement (you decide priority)
-4. Implement it in the appropriate file(s)
-5. Remove the @pytest.mark.skip decorator from its tests
-6. Run tests: cd backend && pytest -v
-7. Update prd.json - set passes: true for completed feature
-8. Update progress.txt with what you did
-9. If ALL features are complete, output: <promise>COMPLETE</promise>
-
-RULES:
-- Only work on ONE feature per iteration
-- Always run tests after changes
-- Update both prd.json and progress.txt before finishing
-
-Current directory: $(pwd)
+Follow the instructions in the ralph-expense prompt above with MODE=afk.
 " --approval-mode full-auto 2>&1) || true
 
     echo "$result" | tee -a "$LOG_FILE"

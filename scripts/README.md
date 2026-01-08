@@ -1,6 +1,6 @@
 # Ralph Scripts
 
-Autonomous coding loop scripts for Claude Code and Codex CLI.
+Autonomous coding loop scripts for Claude Code and Codex CLI. All scripts load the repo prompt at `.codex/prompts/ralph-expense.md` so the loop stays in sync with project guidance.
 
 ## Scripts
 
@@ -34,6 +34,14 @@ Let Ralph work autonomously:
 # Codex CLI - 10 iterations max
 ./scripts/codex-afk-ralph.sh 10
 ```
+
+## Prompt & Config
+
+- Prompt file: `.codex/prompts/ralph-expense.md`
+- Override with env vars:
+  - `PROMPT_PATH` - custom prompt path
+  - `TEST_CMD` - change the test command (default: `cd backend && pytest -v`)
+  - `MAX` - AFK iteration cap (default: `10` or first CLI arg)
 
 ## How It Works
 
