@@ -34,6 +34,10 @@ cd backend && pytest -v
 cd backend && pytest -v test_main.py::TestGetExpense
 ```
 
+## Codex utilities
+- Custom command: `codex custom onboard-expense` (usa `.codex/prompts/onboard-expense.md`) para guiar onboarding interactivo y checklist de setup/Codex/Ralph.
+- Skill disponible: `action-doc-updater` en `.codex/skills/action-doc-updater/SKILL.md`; úsalo para mantener docs y logs al día después de cambios.
+
 ### Common Patterns
 
 **Finding an expense by ID:**

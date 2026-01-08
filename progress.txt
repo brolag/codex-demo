@@ -52,3 +52,5 @@ Created comprehensive Ralph loop scripts:
 - Added project-local Ralph custom command at `.codex/prompts/ralph-expense.md` to run the loop in this repo; no app code changed and tests not run.
 - Created `action-doc-updater` documentation skill and packaged `action-doc-updater.skill` to keep project docs/logs in sync after changes.
 - Updated all Ralph loop scripts (Codex + Claude + root wrapper) to load `.codex/prompts/ralph-expense.md`, added prompt/config notes to `scripts/README.md`, and ran backend tests (`cd backend && pytest -v`).
+- Added Codex onboarding custom command at `.codex/prompts/onboard-expense.md` (interactive checklist for setup and Ralph/Codex usage); no app code changes and tests not run.
+- Documented the onboarding command in `README.md` and `docs/` and noted the `action-doc-updater` skill in `AGENTS.md`; reran backend tests (`cd backend && pytest -v`: 4 passed, 8 skipped for pending features).

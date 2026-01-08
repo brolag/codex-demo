@@ -115,6 +115,7 @@ VITE_API_URL=http://localhost:8000
 - `npm run build` (frontend) → Build de producción.
 - `npm run preview` (frontend) → Previsualizar build.
 - `ralph.sh` y `scripts/*.sh` → Ejecutan el loop Ralph Wiggum en modos HITL/AFK (lee `prd.json` y `progress.txt`).
+- `codex custom onboard-expense` (Codex) → Onboarding interactivo con checklist de prerequisitos, setup y uso de Ralph/Codex.
 
 ## Contribución
 1. Crea una rama a partir de `main`.

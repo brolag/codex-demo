@@ -46,8 +46,11 @@ Guia para instalar y ejecutar el Expense Tracker en local. Escrita como checklis
 - Para practicar el loop autonomo: `chmod +x ralph.sh` y ejecuta `./ralph.sh 1` (o usa scripts en `scripts/` para modos HITL/AFK).
 - El loop lee `prd.json` y `progress.txt` y ejecuta iteraciones de una sola feature.
 
+## Opcional: onboarding interactivo (Codex)
+- Si usas Codex CLI, corre `codex custom onboard-expense` para seguir un checklist interactivo de prerequisitos, setup backend/frontend y reglas del loop Ralph/Codex.
+- El comando pregunta por cada paso y sugiere el comando exacto para completar los que falten.
+
 ## Problemas comunes
 - **Versiones**: si falta un modulo, revisa que el entorno virtual este activo y `pip install -r requirements.txt` haya corrido sin errores.
 - **Puertos**: si cambias el puerto del backend, ajusta `allow_origins` en `backend/main.py` y `API_URL` en el frontend.
 - **Estado**: como es en memoria, los datos desaparecen al reiniciar; esto es esperado para el demo.
-
