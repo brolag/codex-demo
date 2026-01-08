@@ -49,3 +49,6 @@ Created comprehensive Ralph loop scripts:
 
 ---
 ## Iteration Log (Codex will append here)
+- Added project-local Ralph custom command at `.codex/prompts/ralph-expense.md` to run the loop in this repo; no app code changed and tests not run.
+- Created `action-doc-updater` documentation skill and packaged `action-doc-updater.skill` to keep project docs/logs in sync after changes.
+- Updated all Ralph loop scripts (Codex + Claude + root wrapper) to load `.codex/prompts/ralph-expense.md`, added prompt/config notes to `scripts/README.md`, and ran backend tests (`cd backend && pytest -v`).

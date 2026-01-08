@@ -1,0 +1,26 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam class {
+  BackgroundColor #FDF6E3
+  BorderColor #F58518
+}
+
+title Diagrama ER - Estado en memoria
+
+entity Expense {
+  * id: string (UUID corto)
+  --
+  description: string
+  amount: float
+  category: string
+  created_at: datetime
+}
+
+note right of Expense
+Almacenado en una lista en memoria.\nNo hay relaciones ni otras entidades.
+end note
+
+legend left
+Modelo simplificado para demo;\nse podría extender con usuario,\nmoneda o tags en el futuro.
+endlegend
+@enduml

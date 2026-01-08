@@ -3,7 +3,7 @@
 # Usage: ./scripts/afk-ralph.sh <iterations>
 # Example: ./scripts/afk-ralph.sh 10
 
-set -e
+set -euo pipefail
 
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -12,7 +12,12 @@ BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 NC='\033[0m'
 
-MAX_ITERATIONS=${1:-10}
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT_DIR"
+
+PROMPT_PATH="${PROMPT_PATH:-.codex/prompts/ralph-expense.md}"
+TEST_CMD="${TEST_CMD:-cd backend && pytest -v}"
+MAX_ITERATIONS="${MAX:-${1:-10}}"
 PROMISE_TEXT="COMPLETE"
 LOG_FILE="ralph-session-$(date +%Y%m%d-%H%M%S).log"
 
@@ -20,7 +25,9 @@ echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}    AFK Ralph Loop (Claude Code)       ${NC}"
 echo -e "${BLUE}========================================${NC}"
 echo ""
+echo -e "Prompt: ${YELLOW}${PROMPT_PATH}${NC}"
 echo -e "Max iterations: ${YELLOW}$MAX_ITERATIONS${NC}"
+echo -e "Test command: ${YELLOW}${TEST_CMD}${NC}"
 echo -e "Exit promise: ${GREEN}<promise>$PROMISE_TEXT</promise>${NC}"
 echo -e "Log file: ${CYAN}$LOG_FILE${NC}"
 echo ""
@@ -32,9 +39,16 @@ if ! command -v claude &> /dev/null; then
     exit 1
 fi
 
+if [[ ! -f "$PROMPT_PATH" ]]; then
+    echo -e "${RED}Prompt file not found:${NC} $PROMPT_PATH"
+    exit 1
+fi
+
 # Log start
 echo "Ralph AFK Session Started: $(date)" | tee "$LOG_FILE"
 echo "Max Iterations: $MAX_ITERATIONS" | tee -a "$LOG_FILE"
+echo "Prompt: $PROMPT_PATH" | tee -a "$LOG_FILE"
+echo "Test command: $TEST_CMD" | tee -a "$LOG_FILE"
 echo "---" | tee -a "$LOG_FILE"
 
 # Main loop
@@ -47,23 +61,14 @@ for ((i=1; i<=$MAX_ITERATIONS; i++)); do
     echo "--- Iteration $i ---" | tee -a "$LOG_FILE"
 
     # Run Claude in print mode (-p) for non-interactive output
-    result=$(claude -p --permission-mode acceptEdits "@prd.json @progress.txt @AGENTS.md
-YOUR TASK:
-1. Read prd.json to see features with passes: false
-2. Read progress.txt to see what was done before
-3. Pick ONE feature to implement (decide priority yourself)
-4. Implement it fully
-5. Remove @pytest.mark.skip from its tests
-6. Run tests: cd backend && pytest -v
-7. Update prd.json - set passes: true for completed feature
-8. Update progress.txt with what you did
-9. If ALL features are complete (all passes: true), output: <promise>COMPLETE</promise>
+    result=$(claude -p --permission-mode acceptEdits "@prd.json @progress.txt @AGENTS.md @$PROMPT_PATH
 
-RULES:
-- ONLY work on ONE feature per iteration
-- Always run tests - they must pass before marking complete
-- Update both prd.json and progress.txt
-- Prioritize risky/architectural tasks first
+MODE=afk
+ITERATION=$i
+MAX=$MAX_ITERATIONS
+TEST_CMD=\"$TEST_CMD\"
+
+Follow the instructions in the ralph-expense prompt above with MODE=afk.
 " 2>&1) || true
 
     echo "$result" | tee -a "$LOG_FILE"

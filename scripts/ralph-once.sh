@@ -2,16 +2,25 @@
 # Ralph Once - Human-in-the-loop single iteration (Claude Code)
 # Usage: ./scripts/ralph-once.sh
 
-set -e
+set -euo pipefail
 
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT_DIR"
+
+PROMPT_PATH="${PROMPT_PATH:-.codex/prompts/ralph-expense.md}"
+TEST_CMD="${TEST_CMD:-cd backend && pytest -v}"
+
 echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}  Ralph Once - Single Iteration (Claude)${NC}"
 echo -e "${BLUE}========================================${NC}"
+echo ""
+echo -e "Prompt: ${YELLOW}${PROMPT_PATH}${NC}"
+echo -e "Test command: ${YELLOW}${TEST_CMD}${NC}"
 echo ""
 
 # Check if claude is available
@@ -22,25 +31,20 @@ if ! command -v claude &> /dev/null; then
     exit 1
 fi
 
-echo -e "${GREEN}Running single iteration...${NC}"
+if [[ ! -f "$PROMPT_PATH" ]]; then
+    echo -e "${YELLOW}Prompt file not found:${NC} $PROMPT_PATH"
+    exit 1
+fi
+
+echo -e "${GREEN}Running single iteration with Claude using ralph-expense prompt...${NC}"
 echo ""
 
-claude --permission-mode acceptEdits "@prd.json @progress.txt @AGENTS.md
-YOUR TASK:
-1. Read prd.json to see features with passes: false
-2. Read progress.txt to see what was done before
-3. Pick ONE feature to implement (highest priority first)
-4. Implement it fully (backend + frontend if needed)
-5. Remove @pytest.mark.skip from its tests
-6. Run tests: cd backend && pytest -v
-7. Update progress.txt with what you did
-8. If ALL features are complete, output: <promise>COMPLETE</promise>
+claude --permission-mode acceptEdits "@prd.json @progress.txt @AGENTS.md @$PROMPT_PATH
 
-RULES:
-- ONLY work on ONE feature per iteration
-- Always run tests after changes
-- Update progress.txt before finishing
-- Prioritize: architectural work > integration > features > polish
+MODE=once
+TEST_CMD=\"$TEST_CMD\"
+
+Follow the instructions in the ralph-expense prompt above with MODE=once.
 "
 
 echo ""

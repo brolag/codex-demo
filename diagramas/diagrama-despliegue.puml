@@ -1,0 +1,33 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam node {
+  BackgroundColor #E8F1F8
+  BorderColor #4C78A8
+  RoundCorner 10
+}
+
+title Despliegue - Entorno local de desarrollo
+
+node "Usuario\n(Navegador Web)" as Browser #F4F8FB
+node "Máquina de desarrollo" as Dev #E8F1F8 {
+  node "Frontend Vite\nPuerto 5173\nnpm run dev" as Front
+  node "Backend FastAPI\nUvicorn puerto 8000\npython main.py" as Back
+  node "Memoria de proceso\n(lista expenses)" as Memory #FDF6E3
+}
+
+Browser --> Front : HTTP (JS/HTML/CSS)
+Front --> Back : HTTP JSON\nCORS permite localhost:5173
+Back --> Memory : Lectura/escritura en memoria
+
+note right of Dev
+No hay base de datos ni servicios externos.\nPara producción, servir build de Vite y\ncorrer Uvicorn/Gunicorn en host/puerto deseado.
+end note
+
+legend left
+| Elemento | Descripción |
+| Browser | Cliente final |
+| Front | Servidor de dev Vite o bundle estático |
+| Back | API FastAPI en Uvicorn |
+| Memory | Estado efímero (sin persistencia) |
+endlegend
+@enduml

@@ -1,0 +1,30 @@
+graph LR
+  classDef container fill:#E8F1F8,stroke:#4C78A8,stroke-width:2px
+  classDef data fill:#FDF6E3,stroke:#F58518,stroke-width:1.5px
+  classDef support fill:#F9E3D4,stroke:#F58518,stroke-width:1.5px
+  classDef client fill:#F4F8FB,stroke:#4C78A8,stroke-width:2px
+
+  subgraph Cliente_Web
+    FE[Frontend React<br/>Vite<br/>Puerto 5173]:::container
+  end
+
+  subgraph Backend
+    API[API FastAPI<br/>main.py<br/>Puerto 8000]:::container
+    MEM[(Almacenamiento<br/>En memoria: lista expenses)]:::data
+  end
+
+  Tests[[Pytest<br/>Suite de pruebas]]:::support
+  Ralph[[Scripts Ralph<br/>Loop HITL/AFK]]:::support
+
+  FE -->|HTTP JSON<br/>POST/GET /expenses| API
+  API -->|Operaciones CRUD| MEM
+  Tests -->|TestClient<br/>limpia estado por fixture| API
+  Ralph -.->|Orquesta iteraciones<br/>según prd.json/progress.txt| API
+
+  note right of MEM: Sin BD externa; datos se pierden al reiniciar.
+
+  subgraph Legend
+    L1([Contenedor sistema]):::container
+    L2([Soporte/automatización]):::support
+    L3([Datos en memoria]):::data
+  end

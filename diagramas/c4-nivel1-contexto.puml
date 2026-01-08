@@ -1,0 +1,33 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam actorStyle awesome
+skinparam rectangle {
+  BackgroundColor #E8F1F8
+  BorderColor #4C78A8
+  RoundCorner 10
+}
+skinparam database {
+  BackgroundColor #FDF6E3
+  BorderColor #F58518
+}
+
+title C4 Nivel 1 - Contexto (Expense Tracker)
+
+actor "Usuario Final\n(Navegador Web)" as User #4C78A8
+rectangle "Expense Tracker\n(Sistema)" as System #DDEAF5 {
+}
+rectangle "Scripts Ralph\n(Herramienta de automatización)" as Ralph #F9E3D4
+
+User --> System : Interactúa vía UI web\n(crear/listar gastos)
+Ralph ..> System : Ejecuta iteraciones\n(automatiza tareas)
+
+note right of System
+Sistema demo sin integraciones externas ni\npersistencia: estado en memoria.
+end note
+
+legend left
+| Color | Significado |
+|<#E8F1F8> | Sistema principal |
+|<#F9E3D4> | Herramienta externa |
+endlegend
+@enduml

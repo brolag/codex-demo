@@ -1,0 +1,17 @@
+graph LR
+  classDef node fill:#E8F1F8,stroke:#4C78A8,stroke-width:2px
+  classDef data fill:#FDF6E3,stroke:#F58518,stroke-width:1.5px
+
+  Browser([Usuario<br/>Navegador Web]):::node
+
+  subgraph Dev[Máquina de desarrollo]
+    Front[Frontend Vite<br/>npm run dev<br/>Puerto 5173]:::node
+    Back[Backend FastAPI<br/>Uvicorn<br/>Puerto 8000]:::node
+    Memory[(Memoria de proceso<br/>lista expenses)]:::data
+  end
+
+  Browser --> Front : HTTP (JS/HTML/CSS)
+  Front --> Back : HTTP JSON<br/>CORS permite localhost:5173
+  Back --> Memory : Lee/Escribe
+
+  note right of Dev: Sin BD ni servicios externos;\nProducción: servir build Vite + Uvicorn/Gunicorn.
